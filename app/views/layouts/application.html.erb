@@ -10,6 +10,16 @@
   </head>
 
   <body>
-    <%= yield %>
+  <% if user_signed_in? %>
+    <%= link_to "Tweets_new", new_tweet_path %>
+    <%= link_to "Log_out", destroy_user_session_path, method: :delete %>
+    <%= link_to "My_page", user_path(current_user.id) %>
+  <% else %>
+    <%= link_to "Sign_up", new_user_registration_path %>
+    <%= link_to "Log_in", new_user_session_path %>
+  <% end %>
+    <%= link_to "Tweets_page", tweets_path %>
+    <%= link_to "Users_page", users_path %>
+  <%= yield %>
   </body>
 </html>
