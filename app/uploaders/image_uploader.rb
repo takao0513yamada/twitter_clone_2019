@@ -12,7 +12,11 @@ class ImageUploader < CarrierWave::Uploader::Base
   end
 
   def extension_whitelist
+<<<<<<< HEAD
     %w(png jpg)
+=======
+    %w(jpg jpeg gif png)
+>>>>>>> master
   end
 
   def filename

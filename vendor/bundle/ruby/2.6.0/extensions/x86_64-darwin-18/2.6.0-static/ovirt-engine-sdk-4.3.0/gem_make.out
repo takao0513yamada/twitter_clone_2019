@@ -1,5 +1,9 @@
 current directory: /Users/yamadatakao/twitter_clone_2019/vendor/bundle/ruby/2.6.0/gems/ovirt-engine-sdk-4.3.0/ext/ovirtsdk4c
+<<<<<<< HEAD
 /Users/yamadatakao/.rbenv/versions/2.6.3/bin/ruby -I /Users/yamadatakao/.rbenv/versions/2.6.3/lib/ruby/2.6.0 -r ./siteconf20191003-43882-z9nsgp.rb extconf.rb
+=======
+/Users/yamadatakao/.rbenv/versions/2.6.3/bin/ruby -I /Users/yamadatakao/.rbenv/versions/2.6.3/lib/ruby/2.6.0 -r ./siteconf20190929-34916-12h512o.rb extconf.rb
+>>>>>>> master
 checking for xml2-config... yes
 checking for curl-config... yes
 creating Makefile
@@ -33,4 +37,8 @@ linking shared-object ovirtsdk4c.bundle
 
 current directory: /Users/yamadatakao/twitter_clone_2019/vendor/bundle/ruby/2.6.0/gems/ovirt-engine-sdk-4.3.0/ext/ovirtsdk4c
 make "DESTDIR=" install
+<<<<<<< HEAD
 /usr/bin/install -c -m 0755 ovirtsdk4c.bundle ./.gem.20191003-43882-nhgtmb
+=======
+/usr/bin/install -c -m 0755 ovirtsdk4c.bundle ./.gem.20190929-34916-11tiz6t
+>>>>>>> master
