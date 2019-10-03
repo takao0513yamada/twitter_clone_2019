@@ -1,5 +1,9 @@
 current directory: /Users/yamadatakao/twitter_clone_2019/vendor/bundle/ruby/2.6.0/gems/json-2.2.0/ext/json
+<<<<<<< HEAD
+/Users/yamadatakao/.rbenv/versions/2.6.3/bin/ruby -I /Users/yamadatakao/.rbenv/versions/2.6.3/lib/ruby/2.6.0 -r ./siteconf20191003-43882-1aissxd.rb extconf.rb
+=======
 /Users/yamadatakao/.rbenv/versions/2.6.3/bin/ruby -I /Users/yamadatakao/.rbenv/versions/2.6.3/lib/ruby/2.6.0 -r ./siteconf20190929-34916-fka3m7.rb extconf.rb
+>>>>>>> master
 creating Makefile
 
 current directory: /Users/yamadatakao/twitter_clone_2019/vendor/bundle/ruby/2.6.0/gems/json-2.2.0/ext/json
