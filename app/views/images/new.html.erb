@@ -1,1 +1,6 @@
-<%= f.file_field :image %>
+<%= form_for @image do |f| %>
+  <p>
+    <%= f.file_field :image %>
+  </p>
+  <%= f.submit %>
+<% end %>

@@ -2,7 +2,6 @@ class TweetsController < ApplicationController
   before_action :authenticate_user!, except: [:index]
   def new
     @tweet = Tweet.new
-    @image = Image.new
   end
 
   def index
@@ -11,7 +10,6 @@ class TweetsController < ApplicationController
 
   def show
     @tweet = Tweet.find(params[:id])
-    @image = @image.image
     @user = @tweet.user
   end
 
