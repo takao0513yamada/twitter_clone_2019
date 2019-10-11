@@ -1,0 +1,311 @@
+AWSTemplateFormatVersion": 2010-09-09
+Description: twitter_clone_2019 Template
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+  KeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: takao-yamada
+    Description: Select Key Pair Name.
+
+# リソース定義
+Resources:
+ # VPC定義
+ TwitterClone2019VPC:
+   Type: AWS::EC2::VPC
+   Properties:
+     CidrBlock: 10.0.0.0/16
+     InstanceTenancy: default
+     EnableDnsSupport: true
+     EnableDnsHostnames: false
+     Tags:
+       - Key: Name
+         Value: twitter_clone
+
+ # Subnet定義
+ TwitterClone2019SubnetAZ1c:
+   Type: AWS::EC2::Subnet
+   Properties:
+     CidrBlock: 10.0.1.0/24
+     AvailabilityZone: ap-northeast-1c
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twitter_clone_subnet_private_1c
+
+ TwitterClone2019SubnetAZ1d:
+   Type: AWS::EC2::Subnet
+   Properties:
+     CidrBlock: 10.0.2.0/24
+     AvailabilityZone: ap-northeast-1d
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twitter_clone_subnet_private_1d
+
+ TwitterClone2019SubnetAZ1a:
+   Type: AWS::EC2::Subnet
+   Properties:
+     CidrBlock: 10.0.0.0/24
+     AvailabilityZone: ap-northeast-1a
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twitter_clone_subnet_public_1a
+
+ # InternetGateway定義
+ TwitterClone2019InternetGateway:
+   Type: AWS::EC2::InternetGateway
+   Properties:
+     Tags:
+       - Key: Name
+         Value: twitter_clone_igw
+
+ # VPC用のDHCPオプションセット
+ TwitterClone2019DHCPOptions:
+   Type: AWS::EC2::DHCPOptions
+   Properties:
+     DomainName: ap-northeast-1.compute.internal
+     DomainNameServers: AmazonProvidedDNS
+
+ # VPCネットワークACL
+ TwitterClone2019NetworkAcl:
+   Type: AWS::EC2::NetworkAcl
+   Properties:
+     VpcId: !Ref TwitterClone2019VPC
+
+
+ # RouteTable定義
+ TwitterClone2019RouteTable1:
+   Type: AWS::EC2::RouteTable
+   Properties:
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twiter_clone_route_table_public
+
+ TwitterClone2019RouteTable2:
+   Type: AWS::EC2::RouteTable
+   Properties:
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twiter_clone_route_table
+
+ # EC2Instance定義
+ TwitterClone2019EC2Instance:
+   Type: AWS::EC2::Instance
+   Properties:
+     SubnetId: !Ref TwitterClone2019SubnetAZ1a
+     InstanceType: !Ref InstanceType
+     AvailabilityZone: ap-northeast-1a
+     ImageId: ami-0ff21806645c5e492
+     KeyName: !Ref KeyPair
+     Monitoring: false
+     InstanceInitiatedShutdownBehavior: stop
+     DisableApiTermination: false
+     Tags:
+       - Key: Name
+         Value: twitter_clone_ec2
+     NetworkInterfaces:
+       DeleteOnTermination: true
+       Description: Primary network interface
+       DeviceIndex: 0
+       SubnetId: !Ref TwitterClone2019SubnetAZ1a
+       PrivateIpAddresses:
+         PrivateIpAddress: 10.0.0.133
+         Primary: true
+       GroupSet: TwitterClone2019EC2SecurityGroup
+
+ # RDS定義
+ TwitterClone2019Rds:
+   Type: AWS::RDS::DBInstance
+   Properties:
+     AllocatedStorage: 20
+     AllowMajorVersionUpgrade: false
+     AutoMinorVersionUpgrade: true
+     DBInstanceClass: db.t2.micro
+     Port: 3306
+     StorageType: gp2
+     BackupRetentionPeriod: 7
+     MasterUsername: admin
+     MasterUserPassword: MyPassword
+     PreferredBackupWindow: 15:58-16:28
+     PreferredMaintenanceWindow: thu:19:32-thu:20:02
+     DBName: MyDatabase
+     Engine": mysql
+     EngineVersion: 5.7.22
+     LicenseModel: general-public-license
+     DBSubnetGroupName: !Ref TwitterClone2019RDSSubnetgroup
+     VPCSecurityGroups: !Ref TwitterClone2019EC2SecurityGroupRDS
+     Tags:
+       - Key: workload-type
+         Value: その他
+
+# S3Bucket
+TwitterClone2019S3Bucket:
+  Type: AWS::S3::Bucke
+  Properties:
+    AccessControl: Private
+    VersioningConfiguration: Suspended
+
+ # RDSのSubnet定義
+ TwitterClone2019RDSSubnetgroup:
+   Type: AWS::RDS::DBSubnetGroup
+   Properties:
+     DBSubnetGroupDescription: twitter_clone_subnet_group
+     SubnetIds:
+       - !Ref TwitterClone2019SubnetAZ1c
+       - !Ref TwitterClone2019SubnetAZ1d
+
+
+ # SecurityGroup定義
+ TwitterClone2019EC2SecurityGroup:
+   Type: AWS::EC2::SecurityGroup
+   Properties:
+     GroupDescription: twitter_clone
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twitter_clone_sg
+     SecurityGroupIngress:
+       - IpProtocol: tcp
+         FromPort: 80
+         ToPort: 80
+         CidrIp": 0.0.0.0/0
+       - IpProtocol: tcp
+         FromPort: 22
+         ToPort: 22
+         CidrIp": 60.135.156.151/32
+       - IpProtocol: tcp
+         FromPort: 3000
+         ToPort: 3000
+         CidrIp": 0.0.0.0/0
+       - IpProtocol: icmp
+         FromPort: -1
+         ToPort: -1
+         CidrIp": 0.0.0.0/0
+       - IpProtocol: tcp
+         FromPort: 3306
+         ToPort: 3306
+         CidrIp": 0.0.0.0/0
+     SecurityGroupEgress:
+       - IpProtocol: -1
+         CidrIp": 0.0.0.0/0
+
+ TwitterClone2019EC2SecurityGroupRDS:
+   Type: AWS::EC2::SecurityGroup
+   Properties:
+     GroupDescription: twitter_clone
+     VpcId: !Ref TwitterClone2019VPC
+     Tags:
+       - Key: Name
+         Value: twitter_clone_rds_sg
+     SecurityGroupIngress:
+       - IpProtocol: tcp
+         FromPort: 3306
+         ToPort: 3306
+         CidrIp": 0.0.0.0/0
+     SecurityGroupEgress:
+       - IpProtocol: -1
+         CidrIp": 0.0.0.0/0
+
+ # ELB定義
+ TwitterClone2019ELB:
+   Type: AWS::ElasticLoadBalancing::LoadBalancer
+   Properties:
+     Name: twitter-clone-2019-elb
+     SecurityGroups:
+       - !Ref TwitterClone2019EC2SecurityGroup
+     Subnets:
+       - !Ref TwitterClone2019SubnetAZ1a
+       - !Ref TwitterClone2019SubnetAZ1c
+
+ # ACLエントリー定義
+ TwitterClone2019NetworkAclEntry1:
+   Type: AWS::EC2::NetworkAclEntry
+   Properties:
+     CidrBlock: 0.0.0.0/0
+     Egress: true
+     Protocol: -1
+     RuleAction: allow
+     RuleNumber: 100
+     NetworkAclId: !Ref TwitterClone2019NetworkAcl
+
+ TwitterClone2019NetworkAclEntry2:
+   Type: AWS::EC2::NetworkAclEntry
+   Properties:
+     CidrBlock: 0.0.0.0/0
+     Egress: true
+     Protocol: -1
+     RuleAction: allow
+     RuleNumber: 100
+     NetworkAclId: !Ref TwitterClone2019NetworkAcl
+
+ # SubnetとACLの関連付け
+ TwitterClone2019SubnetNetworkAclAssociation1:
+   Type: AWS::EC2::SubnetNetworkAclAssociation
+   Properties:
+     NetworkAclId: !Ref TwitterClone2019NetworkAcl
+     SubnetId: !Ref TwitterClone2019SubnetAZ1d
+
+ TwitterClone2019SubnetNetworkAclAssociation2:
+   Type: AWS::EC2::SubnetNetworkAclAssociation
+   Properties:
+     NetworkAclId: !Ref TwitterClone2019NetworkAcl
+     SubnetId: !Ref TwitterClone2019SubnetAZ1a
+
+ TwitterClone2019SubnetNetworkAclAssociation3:
+   Type: AWS::EC2::SubnetNetworkAclAssociation
+   Properties:
+     NetworkAclId: !Ref TwitterClone2019NetworkAcl
+     SubnetId: !Ref TwitterClone2019SubnetAZ1c
+
+ # IgwとVPCの接続
+ TwitterClone2019VPCGatewayAttachment:
+   Type: AWS::EC2::VPCGatewayAttachment
+   Properties:
+     VpcId: !Ref TwitterClone2019VPC
+     InternetGatewayId: !Ref TwitterClone2019InternetGateway
+
+ # SubnetとRouteTableの関連付け
+ TwitterClone2019SubnetRouteTableAssociation:
+   Type: AWS::EC2::SubnetRouteTableAssociation
+   Properties:
+     RouteTableId: !Ref TwitterClone2019RouteTable2
+     SubnetId: !Ref TwitterClone2019SubnetAZ1a
+
+ # Route指定
+ TwitterClone2019Route1:
+   Type: AWS::EC2::Route
+   Properties:
+     DestinationCidrBlock: 0.0.0.0/0
+     RouteTableId: !Ref TwitterClone2019RouteTable1
+     GatewayId: igw-06e73b0b2e04be379
+
+ TwitterClone2019Route2:
+   Type: AWS::EC2::Route
+   Properties:
+     DestinationCidrBlock: 0.0.0.0/0
+     RouteTableId: !Ref TwitterClone2019RouteTable2
+     GatewayId: igw0b71bbb7973e2c769
+     DependsOn: gw1
+
+ TwitterClone2019Route3:
+   Type: AWS::EC2::Route
+   Properties:
+     RouteTableId: !Ref TwitterClone2019RouteTable2
+     GatewayId: vpce-0f485f9f610a96048
+
+ # DHCPOptionとVPCの関連付け
+ TwitterClone2019VPCDHCPOptionsAssociation:
+   Type: AWS::EC2::VPCDHCPOptionsAssociation
+   Properties:
+     VpcId: !Ref TwitterClone2019VPC
+     DhcpOptionsId: !Ref TwitterClone2019DHCPOptions
