@@ -150,7 +150,7 @@ Resources:
 
 # S3Bucket
 TwitterClone2019S3Bucket:
-  Type: AWS::S3::Bucke
+  Type: AWS::S3::Bucket
   Properties:
     AccessControl: Private
     VersioningConfiguration: Suspended
