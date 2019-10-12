@@ -65,7 +65,7 @@ Resources:
    Properties:
      Tags:
        - Key: Name
-         Value: twitter_clone_igw
+         Value: twitter_clone_2019_igw
 
  # VPC用のDHCPオプションセット
  TwitterClone2019DHCPOptions:
@@ -153,7 +153,8 @@ Resources:
    Type: AWS::S3::Bucket
    Properties:
      AccessControl: Private
-     VersioningConfiguration: Suspended
+     VersioningConfiguration:
+       Status: Enabled
 
  # RDSのSubnet定義
  TwitterClone2019RDSSubnetgroup:
