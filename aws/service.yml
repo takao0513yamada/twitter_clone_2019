@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion": 2010-09-09
+AWSTemplateFormatVersion: 2010-09-09
 Description: twitter_clone_2019 Template
 
 Parameters:
@@ -148,12 +148,12 @@ Resources:
        - Key: workload-type
          Value: その他
 
-# S3Bucket
-TwitterClone2019S3Bucket:
-  Type: AWS::S3::Bucket
-  Properties:
-    AccessControl: Private
-    VersioningConfiguration: Suspended
+ # S3Bucket
+ TwitterClone2019S3Bucket:
+   Type: AWS::S3::Bucket
+   Properties:
+     AccessControl: Private
+     VersioningConfiguration: Suspended
 
  # RDSのSubnet定義
  TwitterClone2019RDSSubnetgroup:
