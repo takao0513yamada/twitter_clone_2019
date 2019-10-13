@@ -91,13 +91,7 @@ Resources:
        - Key: Name
          Value: twiter_clone_route_table_public
 
- TwitterClone2019RouteTable2:
-   Type: AWS::EC2::RouteTable
-   Properties:
-     VpcId: !Ref TwitterClone2019VPC
-     Tags:
-       - Key: Name
-         Value: twiter_clone_route_table
+
 
  # EC2Instance定義
  TwitterClone2019EC2Instance:
@@ -275,12 +269,7 @@ Resources:
      VpcId: !Ref TwitterClone2019VPC
      InternetGatewayId: !Ref TwitterClone2019InternetGateway
 
- # SubnetとRouteTableの関連付け
- TwitterClone2019SubnetRouteTableAssociation:
-   Type: AWS::EC2::SubnetRouteTableAssociation
-   Properties:
-     RouteTableId: !Ref TwitterClone2019RouteTable2
-     SubnetId: !Ref TwitterClone2019SubnetAZ1a
+
 
  # Route指定
  TwitterClone2019Route1:
@@ -288,21 +277,9 @@ Resources:
    Properties:
      DestinationCidrBlock: 0.0.0.0/0
      RouteTableId: !Ref TwitterClone2019RouteTable1
-     GatewayId: igw-06e73b0b2e04be379
+     GatewayId: igw-0b71bbb7973e2c769
 
- TwitterClone2019Route2:
-   Type: AWS::EC2::Route
-   Properties:
-     DestinationCidrBlock: 0.0.0.0/0
-     RouteTableId: !Ref TwitterClone2019RouteTable2
-     GatewayId: igw0b71bbb7973e2c769
-     DependsOn: gw1
 
- TwitterClone2019Route3:
-   Type: AWS::EC2::Route
-   Properties:
-     RouteTableId: !Ref TwitterClone2019RouteTable2
-     GatewayId: vpce-0f485f9f610a96048
 
  # DHCPOptionとVPCの関連付け
  TwitterClone2019VPCDHCPOptionsAssociation:
