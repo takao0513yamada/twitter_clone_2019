@@ -72,7 +72,8 @@ Resources:
    Type: AWS::EC2::DHCPOptions
    Properties:
      DomainName: ap-northeast-1.compute.internal
-     DomainNameServers: AmazonProvidedDNS
+     DomainNameServers:
+       - AmazonProvidedDNS
 
  # VPCネットワークACL
  TwitterClone2019NetworkAcl:
@@ -139,7 +140,7 @@ Resources:
      PreferredBackupWindow: 15:58-16:28
      PreferredMaintenanceWindow: thu:19:32-thu:20:02
      DBName: MyDatabase
-     Engine": mysql
+     Engine: mysql
      EngineVersion: 5.7.22
      LicenseModel: general-public-license
      DBSubnetGroupName: !Ref TwitterClone2019RDSSubnetgroup
@@ -179,26 +180,26 @@ Resources:
        - IpProtocol: tcp
          FromPort: 80
          ToPort: 80
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
        - IpProtocol: tcp
          FromPort: 22
          ToPort: 22
-         CidrIp": 60.135.156.151/32
+         CidrIp: 60.135.156.151/32
        - IpProtocol: tcp
          FromPort: 3000
          ToPort: 3000
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
        - IpProtocol: icmp
          FromPort: -1
          ToPort: -1
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
        - IpProtocol: tcp
          FromPort: 3306
          ToPort: 3306
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
      SecurityGroupEgress:
        - IpProtocol: -1
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
 
  TwitterClone2019EC2SecurityGroupRDS:
    Type: AWS::EC2::SecurityGroup
@@ -212,10 +213,10 @@ Resources:
        - IpProtocol: tcp
          FromPort: 3306
          ToPort: 3306
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
      SecurityGroupEgress:
        - IpProtocol: -1
-         CidrIp": 0.0.0.0/0
+         CidrIp: 0.0.0.0/0
 
  # ELB定義
  TwitterClone2019ELB:
