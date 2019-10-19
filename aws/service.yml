@@ -1,19 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: twitter_clone_2019 Template
 
-Parameters:
-  InstanceType:
-    Type: String
-    Default: t2.micro
-    AllowedValues:
-      - t2.micro
-      - m1.small
-      - m1.large
-  KeyPair:
-    Type: AWS::EC2::KeyPair::KeyName
-    Default: takao-yamada
-    Description: Select Key Pair Name.
-
 # リソース定義
 Resources:
  # VPC定義
@@ -97,11 +84,10 @@ Resources:
  TwitterClone2019EC2Instance:
    Type: AWS::EC2::Instance
    Properties:
-     SubnetId: !Ref TwitterClone2019SubnetAZ1a
-     InstanceType: !Ref InstanceType
+     InstanceType: t2.micro
      AvailabilityZone: ap-northeast-1a
      ImageId: ami-0ff21806645c5e492
-     KeyName: !Ref KeyPair
+     KeyName: takao-yamada
      Monitoring: false
      InstanceInitiatedShutdownBehavior: stop
      DisableApiTermination: false
@@ -109,14 +95,12 @@ Resources:
        - Key: Name
          Value: twitter_clone_ec2
      NetworkInterfaces:
-       DeleteOnTermination: true
-       Description: Primary network interface
-       DeviceIndex: 0
-       SubnetId: !Ref TwitterClone2019SubnetAZ1a
-       PrivateIpAddresses:
-         PrivateIpAddress: 10.0.0.133
-         Primary: true
-       GroupSet: TwitterClone2019EC2SecurityGroup
+       - DeleteOnTermination: true
+         Description: Primary network interface
+         DeviceIndex: 0
+         SubnetId: !Ref TwitterClone2019SubnetAZ1a
+         GroupSet:
+           - !Ref TwitterClone2019EC2SecurityGroup
 
  # RDS定義
  TwitterClone2019RDS:
@@ -138,7 +122,8 @@ Resources:
      EngineVersion: 5.7.22
      LicenseModel: general-public-license
      DBSubnetGroupName: !Ref TwitterClone2019RDSSubnetgroup
-     VPCSecurityGroups: !Ref TwitterClone2019EC2SecurityGroupRDS
+     VPCSecurityGroups:
+       - !Ref TwitterClone2019EC2SecurityGroupRDS
      Tags:
        - Key: workload-type
          Value: その他
@@ -212,17 +197,6 @@ Resources:
        - IpProtocol: -1
          CidrIp: 0.0.0.0/0
 
- # ELB定義
- TwitterClone2019ELB:
-   Type: AWS::ElasticLoadBalancing::LoadBalancer
-   Properties:
-     Name: twitter-clone-2019-elb
-     SecurityGroups:
-       - !Ref TwitterClone2019EC2SecurityGroup
-     Subnets:
-       - !Ref TwitterClone2019SubnetAZ1a
-       - !Ref TwitterClone2019SubnetAZ1c
-
  # ACLエントリー定義
  TwitterClone2019NetworkAclEntry1:
    Type: AWS::EC2::NetworkAclEntry
@@ -277,7 +251,7 @@ Resources:
    Properties:
      DestinationCidrBlock: 0.0.0.0/0
      RouteTableId: !Ref TwitterClone2019RouteTable1
-     GatewayId: igw-0b71bbb7973e2c769
+     GatewayId: !Ref TwitterClone2019InternetGateway
 
 
 
